@@ -1,0 +1,8 @@
+SOURCE = \
+MMA/MMA.C \
+tractionDisplacement/tractionDisplacementFvPatchVectorField.C \
+adjointOutletPressureHeat/adjointOutletPressureHeatFvPatchScalarField.C \
+adjointOutletVelocityHeat/adjointOutletVelocityHeatFvPatchVectorField.C \
+multiFluidFoam.C \
+
+# sources
