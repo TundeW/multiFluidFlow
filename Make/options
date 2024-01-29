@@ -18,4 +18,4 @@ EXE_LIBS = \
     -lincompressibleTurbulenceModels \
     -lincompressibleTransportModels \
     -latmosphericModels \
-    -lnlopt
+
