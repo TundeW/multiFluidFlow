@@ -155,7 +155,7 @@ vf1.correctBoundaryConditions();
 vf2.correctBoundaryConditions();
 //const volScalarField& vf3 = db().lookupObject<volScalarField>("vf2");
 //Info<< vf3 << endl;
-Info<< "Mesh: " << Cell << endl;
+//Info<< "Mesh: " << Cell << endl;
 Info<< "Projection Completed!" << endl;
 //Info<< vf3 << endl;
 
@@ -256,37 +256,6 @@ volScalarField alpha2
      vf1Pen*(vf2Pen*alphaMin + (1 - vf2Pen)*alphaMax) + (1 - vf1Pen)*alphaMax
 );
 
-/* volScalarField DT
-(
-     IOobject
-     (
-         "DT",
-         runTime.timeName(),
-         mesh,
-         IOobject::READ_IF_PRESENT,
-         IOobject::AUTO_WRITE
-     ),
-     vf1Pen*(vf2Pen*DT2 + (1 - vf2Pen)*DT1) + (1 - vf1Pen)*DTS
-     //vf1Pen*DTS
-     //mesh
-);
-
-DT=vf1Pen*(vf2Pen*DT2 + (1 - vf2Pen)*DT1) + (1 - vf1Pen)*DTS;
-Info<< "Recalculating DT and vf2\n" << endl;
-//const volVectorField& C = mesh.C();
-forAll(Cell, cellI)
-{
-    //DT[cellI]=0.0001;
-    if (vf1[cellI] > 0.3 && vf1[cellI] < 1)
-    {
-        //DT[cellI]=2e-6;
-        //DT[cellI]=1e-11;
-        //DT[cellI]=0.04;
-    }
-}
-DT.write(); */
-//Info<< "This is DT" << DT << endl;
-//1 - vf2Pen*alphaMin;
 
 Info<< "Reading field p1\n" << endl;
 volScalarField p1
@@ -370,20 +339,6 @@ volVectorField U
     mesh
 );
 
-/*Info<< "Reading field T\n" << endl;
-volScalarField T
-(
-    IOobject
-    (
-        "T",
-        runTime.timeName(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
-    ),
-    mesh
-);*/
-
 //#include "createPhi.H"
 Info<< "Reading/calculating face flux field phi\n" << endl;
 surfaceScalarField phi
@@ -427,39 +382,6 @@ surfaceScalarField phi2
     fvc::flux(U2)
 );
 
-/*Info<< "Reading/calculating face flux field phic1\n" << endl;
-surfaceScalarField phic1
-(
-    IOobject
-    (
-        "phic1",
-        runTime.timeName(),
-        mesh,
-        IOobject::READ_IF_PRESENT,
-        IOobject::AUTO_WRITE
-    ),
-    //fvc::flux(rhoc1*U1)
-    rhoc1*fvc::flux(U1)
-    //fvc::flux(U1)
-);
-
-Info<< "Reading/calculating face flux field phic2\n" << endl;
-surfaceScalarField phic2
-(
-    IOobject
-    (
-        "phic2",
-        runTime.timeName(),
-        mesh,
-        IOobject::READ_IF_PRESENT,
-        IOobject::AUTO_WRITE
-    ),
-    //fvc::flux(rhoc2*U2)
-    rhoc2*fvc::flux(U2)
-    //fvc::flux(U2)
-);*/
-
-
 label pRefCell = 0;
 scalar pRefValue = 0.0;
 setRefCell(p1, simple.dict(), pRefCell, pRefValue);
@@ -484,163 +406,8 @@ mesh.setFluxRequired(p2.name());
 //    incompressible::turbulenceModel::New(U2, phi2, laminarTransport)
 //);
 
-/*Info<< "Reading Adjoint fields \n" << endl;
-volScalarField p1b
-(
-    IOobject
-    (
-        "p1b",
-        runTime.timeName(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
-    ),
-    mesh
-);
-
-
-volScalarField p2b
-(
-    IOobject
-    (
-        "p2b",
-        runTime.timeName(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
-    ),
-    mesh
-);
-
-
-volVectorField U1b
-(
-    IOobject
-    (
-        "U1b",
-        runTime.timeName(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
-    ),
-    mesh
-);
-
-volVectorField U2b
-(
-    IOobject
-    (
-        "U2b",
-        runTime.timeName(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
-    ),
-    mesh
-);
-
-
-Info<< "Reading field T\n" << endl;
-volScalarField Tb
-(
-    IOobject
-    (
-        "Tb",
-        runTime.timeName(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
-    ),
-    mesh
-);
-
-
-surfaceScalarField phi1b
-(
-    IOobject
-    (
-        "phi1b",
-        runTime.timeName(),
-        mesh,
-        IOobject::READ_IF_PRESENT,
-        IOobject::AUTO_WRITE
-    ),
-    fvc::flux(U1b)
-);
-
-surfaceScalarField phi2b
-(
-    IOobject
-    (
-        "phi2b",
-        runTime.timeName(),
-        mesh,
-        IOobject::READ_IF_PRESENT,
-        IOobject::AUTO_WRITE
-    ),
-    fvc::flux(U2b)
-);
-
-volScalarField fsensMeanT
-(
-    IOobject
-    (
-        "fsensMeanT",
-        runTime.timeName(),
-        mesh,
-        IOobject::NO_READ,
-        IOobject::AUTO_WRITE
-    ),
-    -alphaMax*(1+q)*q/((q+vf1)*(q+vf1))*(U1&U1b),
-    zeroGradientFvPatchScalarField::typeName
-);
-volScalarField fsenshMeanT(fsensMeanT);
-
-volScalarField fsensMeanT_Dvf1
-(
-    IOobject
-    (
-        "fsensMeanT_Dvf1",
-        runTime.timeName(),
-        mesh,
-        IOobject::NO_READ,
-        IOobject::AUTO_WRITE
-    ),
-    -alphaMax*(1+q)*q/((q+vf1)*(q+vf1))*(U1&U1b),
-    zeroGradientFvPatchScalarField::typeName
-);
-volScalarField fsenshMeanT_Dvf1(fsensMeanT_Dvf1);
-
-volScalarField fsensMeanT_Dvf2
-(
-    IOobject
-    (
-        "fsensMeanT_Dvf2",
-        runTime.timeName(),
-        mesh,
-        IOobject::NO_READ,
-        IOobject::AUTO_WRITE
-    ),
-    -alphaMax*(1+q)*q/((q+vf1)*(q+vf1))*(U1&U1b),
-    zeroGradientFvPatchScalarField::typeName
-);
-volScalarField fsenshMeanT_Dvf2(fsensMeanT_Dvf2);*/
-
-
-/*dictionary conFunc = mesh.solutionDict().subDict("constraintFunctionDict_flow");
-int nObjPatch =conFunc.lookupOrDefault<scalar>("numberConstraintPatches",2);
-wordList conPatchNames = conFunc.lookup("constraintPatchesNames");
-label conPatchList[nObjPatch];//patch list
-int iLoop;
-for(iLoop=0; iLoop<nObjPatch; iLoop++)
-{
-    conPatchList[iLoop]=mesh.boundaryMesh().findPatchID(conPatchNames[iLoop]);
-} */
-
-
 #include "createMRF.H"
 #include "createFvOptions.H"
-//#include "readMechanicalProperties.H"
-//#include "readThermalProperties.H"
+
 
 

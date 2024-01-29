@@ -68,7 +68,6 @@ Description
 #include "turbulentTransportModel.H"
 #include "simpleControl.H"
 #include "fvOptions.H"
-#include "MMA/MMA.h"
 
 void write(word matrixName, label timeIndex,
 	   fvVectorMatrix M,

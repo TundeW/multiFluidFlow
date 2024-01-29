@@ -2,6 +2,7 @@
     "files.associations": {
         "multiDensity_simpleFoam.C": "cpp",
         "multiFluidFoam.C": "cpp",
-        "createfields.h": "c"
+        "createfields.h": "c",
+        "createFields.H": "cpp"
     }
 }
