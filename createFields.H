@@ -143,7 +143,7 @@ volScalarField vf2
      mesh
 );
 
-Info<< "Recalculating vf1 and vf2\n" << endl;
+/*Info<< "Recalculating vf1 and vf2\n" << endl;
 const volVectorField& Cell = mesh.C();
 forAll(Cell, cellI)
 {
@@ -156,7 +156,7 @@ vf2.correctBoundaryConditions();
 //const volScalarField& vf3 = db().lookupObject<volScalarField>("vf2");
 //Info<< vf3 << endl;
 //Info<< "Mesh: " << Cell << endl;
-Info<< "Projection Completed!" << endl;
+Info<< "Projection Completed!" << endl;*/
 //Info<< vf3 << endl;
 
 volScalarField vf1Pen

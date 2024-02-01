@@ -63,7 +63,7 @@
     //double x_init[]={0.02062,0.0240064,0.180099,0.0263334,0.219089,0.0750128,0.129857,0.074404,0.0765502,0.0710764,0.0771221,0.0260142,0.00940981,0.00933279,0.0085151,0.00924561,0.0105477,0.010548,0.00984876,0.010033,0.00968426,0.00994047,0.010283,0.0102661}; // Debug - Converged with stress and pressure drop, clearance 0.001 constraints, Mean Temperature objective init3 obj: 549.5574844 
     //double x_init[]={0.0245668,0.0238287,0.175024,0.0280214,0.214232,0.0742954,0.108567,0.0795668,0.0693534,0.0682494,0.0757665,0.0240112,0.00788276,0.00755536,0.00644459,0.0100916,0.0107486,0.0130081,0.00998372,0.00983442,0.00986763,0.0100008,0.00997297,0.010971}; // Debug - AlmostConverged with stress and pressure drop, clearance 0.0 constraints, Mean Temperature objective init3 obj: 549.5574844 
     //double x_init[]={0.024711,0.0238731,0.175067,0.027996,0.214348,0.0741462,0.109403,0.0792187,0.0695075,0.0683754,0.0747721,0.0239434,0.00746019,0.00704623,0.00627982,0.0105321,0.0108215,0.013278,0.0100508,0.0101955,0.00989732,0.00999584,0.00999344,0.0106497}; // Converged with stress and pressure drop, clearance 0.0 constraints, Mean Temperature objective init3 obj: 538.5811542
-    double x_init[]={0.0285182,0.0220532,0.180054,0.026119,0.199784,0.0719692,0.130384,0.0761473,0.0747508,0.0741808,0.0743239,0.0243747,0.00968906,0.00777079,0.00740265,0.00531784,0.012994,0.0118496,0.0120244,0.0106032,0.0109468,0.0100997,0.0128252,0.0120392}; // Converged with stress (2.5e9) and pressure drop, clearance 0.0001 constraints, Mean Temperature objective init3 obj: 539.0571637  
+    //double x_init[]={0.0285182,0.0220532,0.180054,0.026119,0.199784,0.0719692,0.130384,0.0761473,0.0747508,0.0741808,0.0743239,0.0243747,0.00968906,0.00777079,0.00740265,0.00531784,0.012994,0.0118496,0.0120244,0.0106032,0.0109468,0.0100997,0.0128252,0.0120392}; // Converged with stress (2.5e9) and pressure drop, clearance 0.0001 constraints, Mean Temperature objective init3 obj: 539.0571637  
 //Info<< "I created vector of Arrays" << endl;
     double ra = 0.01;
     double rb = 0.02;
@@ -100,8 +100,8 @@
         //Computing effective radii and Thickness
 	    //r_eff = Foam::pow(x_init[2*len + I],4.0);
         //t_eff = Foam::pow(x_init[3*len + I],4.0);
-	    r_eff = x_init[2*len + I] - 0.005;
-        t_eff = x_init[3*len + I] - 0.005;
+	    r_eff = x_init[2*len + I] - 0.002;
+        t_eff = x_init[3*len + I] - 0.002;
 
         //ra = x_init[2*len + I] * (1 - Foam::exp(-b*t_eff) + t_eff*Foam::exp(-b));
         //rb = ra + (x_init[3*len + I] * (1 - Foam::exp(-b*r_eff) + r_eff*Foam::exp(-b)));

@@ -858,10 +858,10 @@ $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/createPisoControl.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/createPimpleControl.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/createSimpleControl.H \
 createFields.H \
-densityProjection.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/createMRF.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/createFvOptions.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/initContinuityErrs.H \
+densityProjection.H \
 U1Eqn.H \
 p1Eqn.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/continuityErrs.H \
