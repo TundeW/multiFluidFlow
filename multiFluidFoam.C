@@ -104,6 +104,28 @@ void write_output(std::ofstream &labelFile, volVectorField& U1){
     
 }
 
+void write_velocity_distribution(std::ofstream &labelFile, volVectorField& U1){
+
+    // Send column names to the stream
+    for(label i=0; i<U1.size(); i++)
+	{
+        double v0 = U1[i][0];
+        double v1 = U1[i][1];
+        double v2 = U1[i][2];
+        //double U1_mag = pow(pow(v0, 2.0) + pow(v1, 2.0) + pow(v2, 2.0), 0.5);
+        //double U1_mag = pow(pow(v0, 2.0) + pow(v1, 2.0) + pow(v2, 2.0), 0.5);
+        double U1_mag = Foam::sqrt(Foam::pow(v0, 2.0) + Foam::pow(v1, 2.0) + Foam::pow(v2, 2.0));
+
+	    labelFile << U1_mag;
+        if(i != U1.size() - 1) {
+            labelFile << ","; // No comma at end of line
+        }
+	}
+    labelFile << "\n";
+    
+    
+}
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 int main(int argc, char *argv[])
@@ -117,11 +139,13 @@ int main(int argc, char *argv[])
 
     std::string filename = "input_data.csv";
     std::string labelfilename = "label_data.csv";
+    std::string velMagfilename = "velocity_magnitude_data.csv";
     // Create an output filestream object for both input and label data files
     std::ofstream inputFile(filename);
     std::ofstream labelFile(labelfilename);
+    std::ofstream velMagFile(velMagfilename);
 
-    int dataSize = 3; // Specify the size of the dataset
+    int dataSize = 1000; // Specify the size of the dataset
     srand (time(0)); // Seed random number generator with system time.
     
     for (int out_iter = 0; out_iter < dataSize; out_iter++) {
@@ -137,7 +161,7 @@ int main(int argc, char *argv[])
     
         
         double x_init[]={0.2225105,0.0238811,0.159695,0.0202648,0.118059,0.0742291,0.125606,0.0275261,0.220039,0.0220306,0.0914213,0.0419477,0.00560588,0.00851001,0.0140996,0.0112353,0.00490028,0.00966353,0.0122237,0.0117558,0.0116712,0.00967284,0.0150398,0.0106401};
-        x_init[0] = out_iter * 0.1;
+        //x_init[0] = out_iter * 0.1;
         double x_init_size = array_size(x_init);
 
         //Update values of x with random values within a specified limit
@@ -218,7 +242,8 @@ int main(int argc, char *argv[])
 
         } while (simple.loop());
 
-        write_output(labelFile, U1);
+        write_output(labelFile, U2);
+        write_velocity_distribution(velMagFile, U2);
         Info<< "End\n" << endl;
     
     }
@@ -226,6 +251,7 @@ int main(int argc, char *argv[])
     // Close the file
     inputFile.close();
     labelFile.close();
+    velMagFile.close();
 
     return 0;
 }
