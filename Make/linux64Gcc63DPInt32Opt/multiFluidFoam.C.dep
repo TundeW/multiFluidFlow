@@ -861,6 +861,7 @@ createFields.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/createMRF.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/createFvOptions.H \
 $(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/initContinuityErrs.H \
+$(WM_PROJECT_DIR)/src/finiteVolume/lnInclude/CourantNo.H \
 densityProjection.H \
 U1Eqn.H \
 p1Eqn.H \

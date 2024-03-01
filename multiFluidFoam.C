@@ -104,6 +104,20 @@ void write_output(std::ofstream &labelFile, volVectorField& U1){
     
 }
 
+void write_velocity_distribution(std::ofstream &label2File, volVectorField& U1, volVectorField& U2){
+
+    // Send column names to the stream
+    for(label i=0; i<U1.size(); i++)
+	{
+	    label2File << U1[i][0]+U2[i][0] << "," << U1[i][1]+U2[i][1] << "," << U1[i][2]+U2[i][2];
+        /*if(i != U1.size() - 1) {
+            label2File << ","; // No comma at end of line
+        }*/
+        label2File << "\n";
+	}
+    label2File << "\n";  
+}
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 int main(int argc, char *argv[])
@@ -117,11 +131,13 @@ int main(int argc, char *argv[])
 
     std::string filename = "input_data.csv";
     std::string labelfilename = "label_data.csv";
+    std::string label2filename = "velocity_data.csv";
     // Create an output filestream object for both input and label data files
     std::ofstream inputFile(filename);
     std::ofstream labelFile(labelfilename);
+    std::ofstream label2File(label2filename);
 
-    int dataSize = 3; // Specify the size of the dataset
+    int dataSize = 1; // Specify the size of the dataset
     srand (time(0)); // Seed random number generator with system time.
     
     for (int out_iter = 0; out_iter < dataSize; out_iter++) {
@@ -133,11 +149,13 @@ int main(int argc, char *argv[])
         #include "createControl.H"
         #include "createFields.H"
         #include "initContinuityErrs.H"
+        #include "CourantNo.H"
         Info << "\nStarting time loop\n" << endl;
     
         
-        double x_init[]={0.2225105,0.0238811,0.159695,0.0202648,0.118059,0.0742291,0.125606,0.0275261,0.220039,0.0220306,0.0914213,0.0419477,0.00560588,0.00851001,0.0140996,0.0112353,0.00490028,0.00966353,0.0122237,0.0117558,0.0116712,0.00967284,0.0150398,0.0106401};
-        x_init[0] = out_iter * 0.1;
+        //double x_init[]={0.2225105,0.0238811,0.159695,0.0202648,0.118059,0.0742291,0.125606,0.0275261,0.220039,0.0220306,0.0914213,0.0419477,0.00560588,0.00851001,0.0140996,0.0112353,0.00490028,0.00966353,0.0122237,0.0117558,0.0116712,0.00967284,0.0150398,0.0106401};
+        double x_init[]={0.025,0.025,0.175,0.025,0.225,0.075,0.125,0.075,0.075,0.075,0.075,0.025,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01};
+        //x_init[0] = out_iter * 0.1;
         double x_init_size = array_size(x_init);
 
         //Update values of x with random values within a specified limit
@@ -165,7 +183,7 @@ int main(int argc, char *argv[])
                 HI = std::min(0.1 - x_init[ind] - x_init[ind2], x_init[ind] - x_init[ind2]); //Pipe Thickness (y-coord + inner radius + thickness < 0.1)
             }
             
-            x_init[ii] = LO + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI-LO)));
+            //x_init[ii] = LO + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI-LO)));
             //Info << "out_iter: " << out_iter << " X_init[" << ii << "]: " << x_init[ii] << " LO: " << LO << " HI: " << HI << endl;
         };
 
@@ -180,13 +198,35 @@ int main(int argc, char *argv[])
         simple.loop();
         Info<< "Recalculating vf1 and vf2\n" << endl;
         const volVectorField& Cell = mesh.C();
+        int iiter = 0;
         forAll(Cell, cellI)
         {
+            if (iiter < 60)
+            {
+                Info << "Element " << iiter << ": " << Cell[cellI] << endl;
+            }
+            iiter = iiter + 1;
             #include "densityProjection.H"
         }
         vf1.write();
         vf2.write();
-            
+
+        double qq = 0.01;
+        for(label i=0; i<U1.size(); i++)
+	    {   
+            scalar vf1I = vf1[i];
+            scalar vf2I = vf2[i];
+            double vf1i = vf1I;
+            double vf2i = vf2I;
+            double vf1PenD = vf1i*(1 + qq)/(vf1i + qq);
+            double vf2PenD = vf2i*(1 + qq)/(vf2i + qq);
+	        U[i][0] = vf1PenD*(vf2PenD*(1) + (1 - vf2PenD)*1e-3) + (1 - vf1PenD)*1e-3; 
+            U[i][1] = 1e-3; 
+            U[i][2] = vf1PenD*(vf2PenD*1e-3 + (1 - vf2PenD)*(-1)) + (1 - vf1PenD)*1e-3;    
+	    }
+        U.write();
+        phi = fvc::flux(U);
+
         do
         {
             //Info<< "Time = " << runTime.timeName() << nl << endl;
@@ -212,20 +252,90 @@ int main(int argc, char *argv[])
                 #include "p2Eqn.H"
             }
 
+            dimensionedScalar Uzero("Uzero", dimensionSet(0,1,-1,0,0,0,0),0.0);
+            dimensionedScalar Uone("Uone", dimensionSet(0,1,-1,0,0,0,0),1.0);  
+
+            DT=vf1Pen*(vf2Pen*DT2 + (1 - vf2Pen)*DT1) + (1 - vf1Pen)*DTS;
+	        DT.correctBoundaryConditions();
+
+            fvScalarMatrix TEqn
+            (
+                fvm::div(phi1+phi2, T)
+                //fvm::div(fvc::flux(U1)+fvc::flux(U2), T)
+                - fvm::laplacian(DT, T)
+            );
+
+	        TEqn.relax();
+            TEqn.solve();
+	        T.correctBoundaryConditions();    
+
             runTime.write();
 
             runTime.printExecutionTime(Info);
 
         } while (simple.loop());
 
+        //double qq = 0.01;
+        /*for(label i=0; i<U1.size(); i++)
+	    {   
+            scalar vf1I = vf1[i];
+            scalar vf2I = vf2[i];
+            double vf1i = vf1I;
+            double vf2i = vf2I;
+            double vf1PenD = vf1i*(1 + qq)/(vf1i + qq);
+            double vf2PenD = vf2i*(1 + qq)/(vf2i + qq);
+	        //U1[i][0] = vf1PenD*(vf2PenD*(1) + (1 - vf2PenD)*0) + (1 - vf1PenD)*0; 
+            U1[i][0] = 0;
+            U1[i][1] = 0; 
+            U1[i][2] = vf1PenD*(vf2PenD*0 + (1 - vf2PenD)*(-1)) + (1 - vf1PenD)*0;
+            //U1[i][2] = 0;
+            U2[i][0] = vf1PenD*(vf2PenD*(1) + (1 - vf2PenD)*0) + (1 - vf1PenD)*0; 
+            //U2[i][0] = 0;
+            U2[i][1] = 0; 
+            U2[i][2] = 0;
+            //U2[i][2] = vf1PenD*(vf2PenD*0 + (1 - vf2PenD)*(-1)) + (1 - vf1PenD)*0;
+    
+	    }
+        U1.correctBoundaryConditions();
+        U2.correctBoundaryConditions();
+
+        phi1 = fvc::flux(U1);
+        phi2 = fvc::flux(U2);
+
+        runTime.write();
+
+        runTime.printExecutionTime(Info);
+
+        DT=vf1Pen*(vf2Pen*DT2 + (1 - vf2Pen)*DT1) + (1 - vf1Pen)*DTS;
+	    DT.correctBoundaryConditions();
+
+        fvScalarMatrix TEqn
+        (
+            fvm::div(phi1+phi2, T)
+            //fvm::div(fvc::flux(U1)+fvc::flux(U2), T)
+            - fvm::laplacian(DT, T)
+        );
+
+	    TEqn.relax();
+        TEqn.solve();
+	    T.correctBoundaryConditions();
+
+        runTime.write();
+
+        runTime.printExecutionTime(Info);*/
+
         write_output(labelFile, U1);
+        write_velocity_distribution(label2File, U1, U2);
         Info<< "End\n" << endl;
+
+        
     
     }
 
     // Close the file
     inputFile.close();
     labelFile.close();
+    label2File.close();
 
     return 0;
 }

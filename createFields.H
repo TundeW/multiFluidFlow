@@ -26,7 +26,7 @@ dimensionedScalar nu2
     transportProperties
 );
 
-/*dimensionedScalar DT1
+dimensionedScalar DT1
 (
     "DT1",
     //dimViscosity,
@@ -45,7 +45,7 @@ dimensionedScalar DTS
     "DTS",
     //dimViscosity,
     transportProperties
-);*/
+);
 
 dimensionedScalar rhoc1
 (
@@ -256,6 +256,21 @@ volScalarField alpha2
      vf1Pen*(vf2Pen*alphaMin + (1 - vf2Pen)*alphaMax) + (1 - vf1Pen)*alphaMax
 );
 
+volScalarField DT
+(
+     IOobject
+     (
+         "DT",
+         runTime.timeName(),
+         mesh,
+         IOobject::READ_IF_PRESENT,
+         IOobject::AUTO_WRITE
+     ),
+     vf1Pen*(vf2Pen*DT2 + (1 - vf2Pen)*DT1) + (1 - vf1Pen)*DTS
+     //vf1Pen*DTS
+     //mesh
+);
+
 
 Info<< "Reading field p1\n" << endl;
 volScalarField p1
@@ -331,6 +346,20 @@ volVectorField U
     IOobject
     (
         "U",
+        runTime.timeName(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh
+);
+
+Info<< "Reading field T\n" << endl;
+volScalarField T
+(
+    IOobject
+    (
+        "T",
         runTime.timeName(),
         mesh,
         IOobject::MUST_READ,
