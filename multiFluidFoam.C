@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
     std::ofstream density1File(density1filename);
     std::ofstream density2File(density2filename);
 
-    int dataSize = 3; //1000; // Specify the size of the dataset
+    int dataSize = 1000; // Specify the size of the dataset
     srand (time(0)); // Seed random number generator with system time.
     
     for (int out_iter = 0; out_iter < dataSize; out_iter++) {
