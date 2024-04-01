@@ -126,6 +126,21 @@ void write_velocity_distribution(std::ofstream &labelFile, volVectorField& U1){
     
 }
 
+void write_density_distribution(std::ofstream &labelFile, volScalarField& vf){
+
+    // Send column names to the stream
+    for(label i=0; i<vf.size(); i++)
+	{
+	    labelFile << vf[i];
+        if(i != vf.size() - 1) {
+            labelFile << ","; // No comma at end of line
+        }
+	}
+    labelFile << "\n";
+    
+    
+}
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 int main(int argc, char *argv[])
@@ -140,12 +155,16 @@ int main(int argc, char *argv[])
     std::string filename = "input_data.csv";
     std::string labelfilename = "label_data.csv";
     std::string velMagfilename = "velocity_magnitude_data.csv";
+    std::string density1filename = "density1_data.csv";
+    std::string density2filename = "density2_data.csv";
     // Create an output filestream object for both input and label data files
     std::ofstream inputFile(filename);
     std::ofstream labelFile(labelfilename);
     std::ofstream velMagFile(velMagfilename);
+    std::ofstream density1File(density1filename);
+    std::ofstream density2File(density2filename);
 
-    int dataSize = 1000; // Specify the size of the dataset
+    int dataSize = 3; //1000; // Specify the size of the dataset
     srand (time(0)); // Seed random number generator with system time.
     
     for (int out_iter = 0; out_iter < dataSize; out_iter++) {
@@ -210,6 +229,9 @@ int main(int argc, char *argv[])
         }
         vf1.write();
         vf2.write();
+
+        write_density_distribution(density1File, vf1);
+        write_density_distribution(density2File, vf2);
             
         do
         {
@@ -252,6 +274,8 @@ int main(int argc, char *argv[])
     inputFile.close();
     labelFile.close();
     velMagFile.close();
+    density1File.close();
+    density2File.close();
 
     return 0;
 }
