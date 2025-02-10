@@ -143,6 +143,19 @@ volScalarField vf2
      mesh
 );
 
+volScalarField vf3
+(
+     IOobject
+     (
+         "vf3",
+         runTime.timeName(),
+         mesh,
+         IOobject::READ_IF_PRESENT,
+         IOobject::AUTO_WRITE
+     ),
+     mesh
+);
+
 /*Info<< "Recalculating vf1 and vf2\n" << endl;
 const volVectorField& Cell = mesh.C();
 forAll(Cell, cellI)

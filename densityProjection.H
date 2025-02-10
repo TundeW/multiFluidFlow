@@ -5,6 +5,7 @@
     //vector x_0(0,0,0);
     //vector x_f(0,0,0.256);
     int len = 6;
+    len = x_init_size/4;
     //Info<< "I want to create Array of vectors" << endl;
     //vector X_0[len] = {vector (0.075,0.025,0), vector (0.075,0.075,0), vector (0.025,0.025,0), vector (0.025,0.075,0)};
     //vector X_f[len] = {vector (0.075,0.025,0.256), vector (0.075,0.075,0.256), vector (0.025,0.025,0.256), vector (0.025,0.075,0.256)};
@@ -183,6 +184,8 @@
 
     vf1[cellI] = 1 - (Rho_b - Rho_a);
     vf2[cellI] = 1 - Rho_a;
+    vf3[cellI] = 1 - Rho_b;
+    //vf2[cellI] = 2;
 
     if (vf1[cellI] == 2 && vf2[cellI] == 0) 
     {

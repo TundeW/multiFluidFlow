@@ -157,14 +157,16 @@ int main(int argc, char *argv[])
     std::string velMagfilename = "velocity_magnitude_data.csv";
     std::string density1filename = "density1_data.csv";
     std::string density2filename = "density2_data.csv";
+    std::string density3filename = "density3_data.csv";
     // Create an output filestream object for both input and label data files
     std::ofstream inputFile(filename);
     std::ofstream labelFile(labelfilename);
     std::ofstream velMagFile(velMagfilename);
     std::ofstream density1File(density1filename);
     std::ofstream density2File(density2filename);
+    std::ofstream density3File(density3filename);
 
-    int dataSize = 1000; // Specify the size of the dataset
+    int dataSize = 5000; // Specify the size of the dataset
     srand (time(0)); // Seed random number generator with system time.
     
     for (int out_iter = 0; out_iter < dataSize; out_iter++) {
@@ -179,7 +181,9 @@ int main(int argc, char *argv[])
         Info << "\nStarting time loop\n" << endl;
     
         
-        double x_init[]={0.2225105,0.0238811,0.159695,0.0202648,0.118059,0.0742291,0.125606,0.0275261,0.220039,0.0220306,0.0914213,0.0419477,0.00560588,0.00851001,0.0140996,0.0112353,0.00490028,0.00966353,0.0122237,0.0117558,0.0116712,0.00967284,0.0150398,0.0106401};
+        //double x_init[]={0.2225105,0.0238811,0.159695,0.0202648,0.118059,0.0742291,0.125606,0.0275261,0.220039,0.0220306,0.0914213,0.0419477,0.00560588,0.00851001,0.0140996,0.0112353,0.00490028,0.00966353,0.0122237,0.0117558,0.0116712,0.00967284,0.0150398,0.0106401};
+        double x_init[]={0.025,0.025,0.01,0.01};
+        //double x_init[]={0.025, 0.025, 0.025, 0.075, 0.175, 0.025, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01};
         //x_init[0] = out_iter * 0.1;
         double x_init_size = array_size(x_init);
 
@@ -212,6 +216,9 @@ int main(int argc, char *argv[])
             //Info << "out_iter: " << out_iter << " X_init[" << ii << "]: " << x_init[ii] << " LO: " << LO << " HI: " << HI << endl;
         };
 
+        Info << "x_init: " << x_init[0] << ", " << x_init[1] << ", " << x_init[2] << ", " << x_init[3] << ", "
+        << x_init[4] << ", " << x_init[5] << ", " << x_init[6] << ", " << x_init[7] << ", "
+        << x_init[8] << ", " << x_init[9] << ", " << x_init[10] << ", " << x_init[11] << endl;
         write_input(inputFile, x_init, x_init_size);
 
         int iterr=0;
@@ -229,9 +236,11 @@ int main(int argc, char *argv[])
         }
         vf1.write();
         vf2.write();
+        vf3.write();
 
         write_density_distribution(density1File, vf1);
         write_density_distribution(density2File, vf2);
+        write_density_distribution(density3File, vf3);
             
         do
         {
